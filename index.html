@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rural Awareness | Giving rural communities a voice</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#f3f6ef;--ink:#1c2b21;--mut:#5b6b5f;--green:#2f6b3a;--sun:#f0b323;--card:#fff;--line:#d9e2d3;--red:#b3372b;--btn:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#141c16;--ink:#eaf1e6;--mut:#9fb0a2;--green:#7cc388;--card:#1d281f;--line:#2c3a2f;--btn:#10200f}}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:1.15rem;text-decoration:none;color:inherit}.logo b{color:var(--green)}
+.links{display:flex;gap:4px;flex-wrap:wrap}
+.links a{text-decoration:none;color:var(--ink);padding:6px 12px;border-radius:20px;font-size:.95rem}
+.links a.on{background:var(--green);color:var(--btn)}
+h1{font-size:clamp(2.2rem,7vw,4rem);line-height:1.04;margin:0 0 16px;font-weight:800}
+h2{font-size:1.6rem;margin:28px 0 10px}
+.hero{padding:48px 0 36px;border-bottom:6px solid var(--sun)}
+.hero p{max-width:56ch;color:var(--mut);font-size:1.12rem;margin:0 0 20px}
+.quote{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;max-width:24ch;padding:36px 0;margin:0}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+button,.btn{font:inherit;font-weight:600;background:var(--green);color:var(--btn);border:0;border-radius:8px;padding:10px 16px;cursor:pointer;text-decoration:none;display:inline-block}
+.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.del{background:var(--red);color:#fff}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin:18px 0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+label{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+.meta{color:var(--mut);font-size:.9rem}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.bar input{flex:2 1 200px}.bar select{flex:1 1 140px}
+.list{display:grid;gap:14px;padding-bottom:40px}
+.item{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--sun);border-radius:10px;padding:14px 18px}
+.item.resolved,.item.published{border-left-color:var(--green)}
+.item h3{margin:6px 0}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:1px 10px;font-size:.8rem;margin-right:6px}
+.tag.s{background:var(--sun);color:#1c2b21;border-color:var(--sun);font-weight:600}
+.note{background:var(--bg);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:.92rem}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{flex:1 1 110px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}.stat b{font-size:1.6rem;display:block}
+.act{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.act button{padding:6px 10px;font-size:.8rem}
+.ok{color:var(--green);font-weight:600}.err{color:var(--red)}
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--mut);font-size:.9rem;margin-top:30px}
+.page{display:none}.page.on{display:block}.hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <a class="logo" href="#home"><b>Rural</b> Awareness</a>
+  <div class="links">
+    <a href="#home">Home</a><a href="#reports">Report a problem</a><a href="#stories">Stories</a><a href="#about">About</a><a href="#contact">Contact</a><a href="#admin">Admin</a>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="home">
+  <div class="hero">
+    <h1>Every rural community has a story worth hearing.</h1>
+    <p>We bring attention to the people, challenges, ideas and achievements shaping rural communities. Report a problem, share a story, and follow what changes.</p>
+    <div class="btns"><a class="btn" href="#reports">Report a problem</a><a class="btn alt" href="#stories">Read stories</a></div>
+  </div>
+  <p class="quote">Nothing about rural communities should happen without rural communities being heard.</p>
+  <h2>Latest community reports</h2><div class="list" id="homeList"></div>
+</section>
+
+<section class="page" id="reports">
+  <h1 style="font-size:2.4rem;margin-top:30px">Report a problem</h1>
+  <form id="cform" class="panel">
+    <div class="row"><div><label for="c_cat">Category</label><select id="c_cat" required></select></div>
+    <div><label for="c_vil">Village or area</label><input id="c_vil" required></div></div>
+    <label for="c_title">Short title</label><input id="c_title" required minlength="5" maxlength="150">
+    <label for="c_desc">What is the problem?</label><textarea id="c_desc" rows="4" required minlength="10"></textarea>
+    <div class="row"><div><label for="c_name">Your name (optional)</label><input id="c_name"></div>
+    <div><label for="c_phone">Phone (optional, never shown publicly)</label><input id="c_phone" type="tel"></div></div>
+    <p id="cmsg" class="meta"></p><button type="submit">Send report</button>
+  </form>
+  <h2>Community reports</h2>
+  <div class="bar"><input id="q" type="search" placeholder="Search by title or village" aria-label="Search reports">
+    <select id="fcat" aria-label="Filter by category"><option value="">All categories</option></select>
+    <select id="fst" aria-label="Filter by status"><option value="">Any status</option><option value="approved">Open</option><option value="in_progress">In progress</option><option value="resolved">Resolved</option></select></div>
+  <div class="list" id="list"></div>
+</section>
+
+<section class="page" id="stories">
+  <h1 style="font-size:2.4rem;margin-top:30px">Stories</h1>
+  <p class="meta">Local stories. Lasting change. Read what communities are doing, then share yours.</p>
+  <div class="list" id="slist"></div>
+  <form id="sform" class="panel"><h2 style="margin-top:0">Share a story</h2>
+    <label for="s_title">Title</label><input id="s_title" required minlength="5" maxlength="150">
+    <div class="row"><div><label for="s_vil">Village or area</label><input id="s_vil"></div><div><label for="s_name">Your name (optional)</label><input id="s_name"></div></div>
+    <label for="s_body">Your story</label><textarea id="s_body" rows="6" required minlength="20"></textarea>
+    <p id="smsg" class="meta"></p><button type="submit">Send story</button></form>
+</section>
+
+<section class="page" id="about">
+  <h1 style="font-size:2.4rem;margin-top:30px">About Rural Awareness</h1>
+  <p style="max-width:62ch">Rural Awareness gives rural communities a place to report problems with water, roads, health, schools and more, and to share the stories that deserve attention.</p>
+  <h2>How it works</h2>
+  <div class="list"><div class="item"><h3>1. You report or share</h3>Send a problem or a story from any phone.</div>
+  <div class="item"><h3>2. We review</h3>Our team checks each submission before it goes public. Your phone number is never shown.</div>
+  <div class="item"><h3>3. You follow progress</h3>Reports move from open to in progress to resolved, with public updates.</div></div>
+</section>
+
+<section class="page" id="contact">
+  <h1 style="font-size:2.4rem;margin-top:30px">Contact</h1>
+  <div class="panel"><p>Email: <a id="ce" href="#"></a></p><p>Phone: <span id="cp"></span></p><p class="meta">Replace these details in the CONTACT settings at the top of the script.</p></div>
+</section>
+
+<section class="page" id="admin">
+  <div id="login" class="panel" style="max-width:400px">
+    <h2 style="margin-top:0">Admin sign in</h2>
+    <label for="em">Email</label><input id="em" type="email" autocomplete="username">
+    <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+    <p id="lerr" class="err"></p><button id="doLogin">Sign in</button>
+  </div>
+  <div id="dash" class="hide">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px"><h2>Dashboard</h2><button class="alt" id="out">Sign out</button></div>
+    <div class="stats" id="stats"></div>
+    <div class="btns" style="margin:16px 0"><button id="t1">Reports</button><button class="alt" id="t2">Stories</button><button class="alt" id="t3">Categories</button></div>
+    <div id="p1"><select id="ast" aria-label="Filter reports by status" style="max-width:240px"><option value="">All statuses</option><option value="pending">Pending review</option><option value="approved">Open</option><option value="in_progress">In progress</option><option value="resolved">Resolved</option><option value="rejected">Rejected</option></select>
+      <div class="list" id="alist" style="margin-top:14px"></div></div>
+    <div id="p2" class="hide"><div class="list" id="aslist"></div></div>
+    <div id="p3" class="hide"><form id="catf" class="panel" style="display:flex;gap:8px"><input id="newcat" placeholder="New category name" required><button type="submit">Add category</button></form><div class="list" id="catlist"></div></div>
+  </div>
+</section>
+</main>
+<footer>Rural Awareness. Giving rural communities a voice.</footer>
+</div>
+
+<script>
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const CONTACT = { email: 'info@example.org', phone: '+000 000 000 000' };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const br = s => esc(s).replace(/\n/g, '<br>');
+const fmt = d => new Date(d).toLocaleDateString(undefined, {day:'numeric', month:'short', year:'numeric'});
+const LABEL = {pending:'Pending review', approved:'Open', in_progress:'In progress', resolved:'Resolved', rejected:'Rejected', published:'Published'};
+const ready = !SUPABASE_URL.startsWith('YOUR_');
+const sb = ready ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+let cats = [], pubList = [], stories = [], all = [], allS = [];
+const catName = id => (cats.find(c => c.id === id) || {}).name || 'Other';
+$('ce').textContent = CONTACT.email; $('ce').href = 'mailto:' + CONTACT.email; $('cp').textContent = CONTACT.phone;
+
+// Routing
+function route() {
+  const p = (location.hash.slice(1) || 'home'), id = document.getElementById(p) ? p : 'home';
+  document.querySelectorAll('.page').forEach(s => s.classList.toggle('on', s.id === id));
+  document.querySelectorAll('.links a').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + id));
+  window.scrollTo(0, 0);
+  if (id === 'admin') session();
+}
+addEventListener('hashchange', route);
+
+// Public data
+const reportHtml = x => `<article class="item ${x.status}"><span class="tag s">${LABEL[x.status]}</span><span class="tag">${esc(catName(x.category_id))}</span>
+  <h3>${esc(x.title)}</h3><div class="meta">${esc(x.village)}, reported ${fmt(x.created_at)}</div><p>${br(x.description)}</p>
+  ${x.admin_note ? `<div class="note"><b>Update:</b> ${esc(x.admin_note)}</div>` : ''}</article>`;
+async function loadPublic() {
+  if (!ready) { const m = '<p class="meta">Connect Supabase (top of the script) to load content.</p>'; $('list').innerHTML = $('homeList').innerHTML = $('slist').innerHTML = m; return; }
+  const [c, p, s] = await Promise.all([sb.from('categories').select('*').order('name'),
+    sb.from('public_complaints').select('*').order('created_at', {ascending:false}),
+    sb.from('public_stories').select('*').order('created_at', {ascending:false})]);
+  cats = c.data || []; pubList = p.data || []; stories = s.data || [];
+  const a = cats.filter(x => x.active), o = a.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join('');
+  $('c_cat').innerHTML = o; $('fcat').innerHTML = '<option value="">All categories</option>' + o;
+  $('homeList').innerHTML = pubList.slice(0, 3).map(reportHtml).join('') || '<p class="meta">No public reports yet.</p>';
+  $('slist').innerHTML = stories.map(x => `<article class="item published"><h3>${esc(x.title)}</h3>
+    <div class="meta">${esc(x.author_name || 'A community member')}${x.village ? ', ' + esc(x.village) : ''}, ${fmt(x.created_at)}</div><p>${br(x.body)}</p></article>`).join('') || '<p class="meta">No stories yet. Be the first to share one below.</p>';
+  renderPublic();
+}
+function renderPublic() {
+  const q = $('q').value.toLowerCase(), c = $('fcat').value, s = $('fst').value;
+  const l = pubList.filter(x => (!c || x.category_id === c) && (!s || x.status === s) && (x.title + ' ' + x.village).toLowerCase().includes(q));
+  $('list').innerHTML = l.map(reportHtml).join('') || '<p class="meta">No reports match yet.</p>';
+}
+['q','fcat','fst'].forEach(i => $(i).addEventListener('input', renderPublic));
+
+async function submitForm(ev, table, row, msg, form, done) {
+  ev.preventDefault();
+  if (!ready) { msg.textContent = 'Site is not connected to Supabase yet.'; return; }
+  msg.className = 'meta'; msg.textContent = 'Sending...';
+  const { error } = await sb.from(table).insert(row);
+  if (error) { msg.className = 'err'; msg.textContent = 'Not sent. Check the fields and try again.'; return; }
+  msg.className = 'ok'; msg.textContent = done; form.reset();
+}
+$('cform').onsubmit = e => submitForm(e, 'complaints', { title: $('c_title').value.trim(), description: $('c_desc').value.trim(), category_id: $('c_cat').value,
+  village: $('c_vil').value.trim(), contact_name: $('c_name').value.trim() || null, contact_phone: $('c_phone').value.trim() || null }, $('cmsg'), $('cform'), 'Thank you. Your report will appear after review.');
+$('sform').onsubmit = e => submitForm(e, 'stories', { title: $('s_title').value.trim(), body: $('s_body').value.trim(),
+  village: $('s_vil').value.trim() || null, author_name: $('s_name').value.trim() || null }, $('smsg'), $('sform'), 'Thank you. Your story will appear after review.');
+
+// Admin
+async function session() {
+  if (!ready) { $('lerr').textContent = 'Connect Supabase first.'; return; }
+  const { data: { session } } = await sb.auth.getSession();
+  let ok = false;
+  if (session) { const { data } = await sb.from('admins').select('user_id').eq('user_id', session.user.id).maybeSingle(); ok = !!data; if (!ok) $('lerr').textContent = 'This account is not an admin.'; }
+  $('login').classList.toggle('hide', ok); $('dash').classList.toggle('hide', !ok);
+  if (ok) loadAdmin();
+}
+$('doLogin').onclick = async () => {
+  $('lerr').textContent = '';
+  const { error } = await sb.auth.signInWithPassword({ email: $('em').value, password: $('pw').value });
+  if (error) $('lerr').textContent = 'Sign in failed. Check your email and password.'; else session();
+};
+$('out').onclick = async () => { await sb.auth.signOut(); session(); };
+
+async function loadAdmin() {
+  const [c, r, s] = await Promise.all([sb.from('categories').select('*').order('name'),
+    sb.from('complaints').select('*').order('created_at', {ascending:false}), sb.from('stories').select('*').order('created_at', {ascending:false})]);
+  cats = c.data || []; all = r.data || []; allS = s.data || [];
+  const n = k => all.filter(x => x.status === k).length;
+  $('stats').innerHTML = [['Reports', all.length], ['Pending', n('pending')], ['In progress', n('in_progress')], ['Resolved', n('resolved')], ['Stories pending', allS.filter(x => x.status === 'pending').length]]
+    .map(([k, v]) => `<div class="stat"><b>${v}</b>${k}</div>`).join('');
+  renderAdmin();
+  $('aslist').innerHTML = allS.map(x => `<article class="item ${x.status}" data-id="${x.id}"><span class="tag s">${LABEL[x.status]}</span>
+    <h3>${esc(x.title)}</h3><div class="meta">${esc(x.author_name || 'Anonymous')}, ${esc(x.village || '')}, ${fmt(x.created_at)}</div><p>${br(x.body)}</p>
+    <div class="act"><button data-s="published">Publish</button><button class="alt" data-s="rejected">Reject</button><button class="del" data-s="del">Delete</button></div></article>`).join('') || '<p class="meta">No stories yet.</p>';
+  $('catlist').innerHTML = cats.map(c => `<div class="item" data-id="${c.id}" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+    <span>${esc(c.name)} <span class="meta">${c.active ? '' : '(hidden)'}</span></span><span class="act" style="margin:0"><button class="alt" data-a="tog">${c.active ? 'Hide' : 'Show'}</button><button class="del" data-a="del">Delete</button></span></div>`).join('');
+}
+function renderAdmin() {
+  const s = $('ast').value, l = all.filter(x => !s || x.status === s);
+  $('alist').innerHTML = l.map(x => `<article class="item ${x.status}" data-id="${x.id}"><span class="tag s">${LABEL[x.status]}</span><span class="tag">${esc(catName(x.category_id))}</span>
+    <h3>${esc(x.title)}</h3><div class="meta">${esc(x.village)}, ${fmt(x.created_at)}</div><p>${br(x.description)}</p>
+    <div class="meta">Contact: ${esc(x.contact_name || 'not given')} ${esc(x.contact_phone || '')}</div>
+    <label>Public update</label><input class="nt" value="${esc(x.admin_note || '')}" placeholder="Visible to the public">
+    <div class="act"><button data-s="approved">Approve</button><button class="alt" data-s="in_progress">In progress</button><button class="alt" data-s="resolved">Resolved</button>
+    <button class="alt" data-s="rejected">Reject</button><button class="alt" data-s="note">Save note</button><button class="del" data-s="del">Delete</button></div></article>`).join('') || '<p class="meta">No reports in this view.</p>';
+}
+$('ast').onchange = renderAdmin;
+const handler = table => async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const card = b.closest('.item'), id = card.dataset.id, nt = card.querySelector('.nt'), note = nt ? (nt.value.trim() || null) : undefined;
+  if (b.dataset.s === 'del') { if (!confirm('Delete this permanently?')) return; await sb.from(table).delete().eq('id', id); }
+  else if (b.dataset.s === 'note') await sb.from(table).update({ admin_note: note }).eq('id', id);
+  else await sb.from(table).update(note === undefined ? { status: b.dataset.s } : { status: b.dataset.s, admin_note: note }).eq('id', id);
+  loadAdmin();
+};
+$('alist').addEventListener('click', handler('complaints')); $('aslist').addEventListener('click', handler('stories'));
+$('catf').onsubmit = async e => { e.preventDefault(); await sb.from('categories').insert({ name: $('newcat').value.trim() }); $('newcat').value = ''; loadAdmin(); };
+$('catlist').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const id = b.closest('.item').dataset.id, c = cats.find(x => x.id === id);
+  if (b.dataset.a === 'tog') await sb.from('categories').update({ active: !c.active }).eq('id', id);
+  if (b.dataset.a === 'del' && confirm('Delete this category?')) await sb.from('categories').delete().eq('id', id);
+  loadAdmin();
+});
+[1,2,3].forEach(n => $('t' + n).onclick = () => [1,2,3].forEach(k => { $('p' + k).classList.toggle('hide', k !== n); $('t' + k).className = k === n ? '' : 'alt'; }));
+
+route(); loadPublic();
+</script>
+</body>
+</html>
