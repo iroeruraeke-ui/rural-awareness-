@@ -168,7 +168,7 @@ addEventListener('hashchange', route);
 
 // Public data
 const reportHtml = x => `<article class="item ${x.status}"><span class="tag s">${LABEL[x.status]}</span><span class="tag">${esc(catName(x.category_id))}</span>
-  <h3>${esc(x.title)}</h3><div class="meta">${esc(x.village)}, reported ${fmt(x.created_at)}</div><p>${br(x.description)}</p>
+  <h3>${esc(x.title)}</h3><div class="meta">${esc(x.village)}, reported ${fmt(x.created_at)}</div><p>${br(x.description)}</p>${x.photo_url ? `<img src="${esc(x.photo_url)}" alt="Photo of the reported problem" loading="lazy" style="max-width:100%;border-radius:8px;margin-top:8px">` : ''}
   ${x.admin_note ? `<div class="note"><b>Update:</b> ${esc(x.admin_note)}</div>` : ''}</article>`;
 async function loadPublic() {
   if (!ready) { const m = '<p class="meta">Connect Supabase (top of the script) to load content.</p>'; $('list').innerHTML = $('homeList').innerHTML = $('slist').innerHTML = m; return; }
