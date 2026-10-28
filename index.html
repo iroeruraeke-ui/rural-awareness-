@@ -236,7 +236,7 @@ async function loadAdmin() {
 function renderAdmin() {
   const s = $('ast').value, l = all.filter(x => !s || x.status === s);
   $('alist').innerHTML = l.map(x => `<article class="item ${x.status}" data-id="${x.id}"><span class="tag s">${LABEL[x.status]}</span><span class="tag">${esc(catName(x.category_id))}</span>
-    <h3>${esc(x.title)}</h3><div class="meta">${esc(x.village)}, ${fmt(x.created_at)}</div><p>${br(x.description)}</p>
+    <h3>${esc(x.title)}</h3><div class="meta">${esc(x.village)}, ${fmt(x.created_at)}</div><p>${br(x.description)}</p>${x.photo_url ? `<img src="${esc(x.photo_url)}" alt="Report photo" style="max-width:100%;border-radius:8px;margin-top:8px">` : ''}<label>Add photo (JPG, PNG or WebP, max 3 MB)</label><input type="file" class="ph" accept="image/jpeg,image/png,image/webp">
     <div class="meta">Contact: ${esc(x.contact_name || 'not given')} ${esc(x.contact_phone || '')}</div>
     <label>Public update</label><input class="nt" value="${esc(x.admin_note || '')}" placeholder="Visible to the public">
     <div class="act"><button data-s="approved">Approve</button><button class="alt" data-s="in_progress">In progress</button><button class="alt" data-s="resolved">Resolved</button>
