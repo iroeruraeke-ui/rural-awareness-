@@ -228,7 +228,7 @@ async function loadAdmin() {
     .map(([k, v]) => `<div class="stat"><b>${v}</b>${k}</div>`).join('');
   renderAdmin();
   $('aslist').innerHTML = allS.map(x => `<article class="item ${x.status}" data-id="${x.id}"><span class="tag s">${LABEL[x.status]}</span>
-    <h3>${esc(x.title)}</h3><div class="meta">${esc(x.author_name || 'Anonymous')}, ${esc(x.village || '')}, ${fmt(x.created_at)}</div><p>${br(x.body)}</p>
+    <h3>${esc(x.title)}</h3><div class="meta">${esc(x.author_name || 'Anonymous')}, ${esc(x.village || '')}, ${fmt(x.created_at)}</div><p>${br(x.body)}</p>${x.photo_url ? `<img src="${esc(x.photo_url)}" alt="Story photo" style="max-width:100%;border-radius:8px;margin-top:8px">` : ''}<label>Add photo (JPG, PNG or WebP, max 3 MB)</label><input type="file" class="ph" accept="image/jpeg,image/png,image/webp">
     <div class="act"><button data-s="published">Publish</button><button class="alt" data-s="rejected">Reject</button><button class="del" data-s="del">Delete</button></div></article>`).join('') || '<p class="meta">No stories yet.</p>';
   $('catlist').innerHTML = cats.map(c => `<div class="item" data-id="${c.id}" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
     <span>${esc(c.name)} <span class="meta">${c.active ? '' : '(hidden)'}</span></span><span class="act" style="margin:0"><button class="alt" data-a="tog">${c.active ? 'Hide' : 'Show'}</button><button class="del" data-a="del">Delete</button></span></div>`).join('');
