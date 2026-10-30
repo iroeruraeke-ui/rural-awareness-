@@ -180,7 +180,7 @@ async function loadPublic() {
   $('c_cat').innerHTML = o; $('fcat').innerHTML = '<option value="">All categories</option>' + o;
   $('homeList').innerHTML = pubList.slice(0, 3).map(reportHtml).join('') || '<p class="meta">No public reports yet.</p>';
   $('slist').innerHTML = stories.map(x => `<article class="item published"><h3>${esc(x.title)}</h3>
-    <div class="meta">${esc(x.author_name || 'A community member')}${x.village ? ', ' + esc(x.village) : ''}, ${fmt(x.created_at)}</div><p>${br(x.body)}</p></article>`).join('') || '<p class="meta">No stories yet. Be the first to share one below.</p>';
+    <div class="meta">${esc(x.author_name || 'A community member')}${x.village ? ', ' + esc(x.village) : ''}, ${fmt(x.created_at)}</div><p>${br(x.body)}</p>${x.photo_url ? `<img src="${esc(x.photo_url)}" alt="Story photo" loading="lazy" style="max-width:100%;border-radius:8px;margin-top:8px">` : ''}/article>`).join('') || '<p class="meta">No stories yet. Be the first to share one below.</p>';
   renderPublic();
 }
 function renderPublic() {
