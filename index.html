@@ -293,7 +293,50 @@ $('catlist').addEventListener('click', async e => {
   loadAdmin();
 });
 [1,2,3].forEach(n => $('t' + n).onclick = () => [1,2,3].forEach(k => { $('p' + k).classList.toggle('hide', k !== n); $('t' + k).className = k === n ? '' : 'alt'; }));
-
+// Blog
+let bposts = [], bEdit = null;
+const blogHtml = x => `<article class="item published"><span class="meta">${fmt(x.created_at)}</span><h3>${esc(x.title)}</h3>${x.photo_url ? `<img src="${esc(x.photo_url)}" alt="" loading="lazy" style="max-width:100%;border-radius:8px;margin:8px 0">` : ''}<p>${br(x.body)}</p></article>`;
+async function loadBlog() {
+  if (!ready) return;
+  const { data } = await sb.from('posts').select('*').eq('published', true).order('created_at', { ascending: false });
+  $('blist').innerHTML = (data || []).map(blogHtml).join('') || '<p class="meta">No posts yet. Check back soon.</p>';
+}
+async function loadBlogAdmin() {
+  const { data } = await sb.from('posts').select('*').order('created_at', { ascending: false });
+  bposts = data || [];
+  $('balist').innerHTML = bposts.map(x => `<article class="item" data-id="${x.id}"><span class="tag s">${x.published ? 'Published' : 'Draft'}</span><h3>${esc(x.title)}</h3><div class="meta">${fmt(x.created_at)}</div><div class="act"><button data-a="toggle">${x.published ? 'Unpublish' : 'Publish'}</button><button class="alt" data-a="edit">Edit</button><button class="del" data-a="del">Delete</button></div></article>`).join('') || '<p class="meta">No posts yet.</p>';
+}
+const t4 = document.createElement('button'); t4.id = 't4'; t4.className = 'alt'; t4.textContent = 'Blog'; $('t3').after(t4);
+t4.onclick = () => { [1,2,3].forEach(k => { $('p' + k).classList.add('hide'); $('t' + k).className = 'alt'; }); $('p4').classList.remove('hide'); t4.className = ''; loadBlogAdmin(); };
+[1,2,3].forEach(k => $('t' + k).addEventListener('click', () => { $('p4').classList.add('hide'); t4.className = 'alt'; }));
+function resetBlogForm() { bEdit = null; $('bform').reset(); $('b_pub').checked = true; $('bsave').textContent = 'Save post'; $('bcancel').classList.add('hide'); }
+$('bcancel').onclick = resetBlogForm;
+$('balist').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const id = b.closest('.item').dataset.id, x = bposts.find(p => p.id === id);
+  if (b.dataset.a === 'del') { if (!confirm('Delete this post permanently?')) return; await sb.from('posts').delete().eq('id', id); }
+  else if (b.dataset.a === 'toggle') await sb.from('posts').update({ published: !x.published }).eq('id', id);
+  else if (b.dataset.a === 'edit') { bEdit = id; $('b_title').value = x.title; $('b_body').value = x.body; $('b_pub').checked = x.published; $('bsave').textContent = 'Update post'; $('bcancel').classList.remove('hide'); $('bform').scrollIntoView(); return; }
+  loadBlogAdmin(); loadBlog();
+});
+$('bform').onsubmit = async e => {
+  e.preventDefault();
+  const msg = $('bmsg'); msg.className = 'meta'; msg.textContent = 'Saving...';
+  const row = { title: $('b_title').value.trim(), body: $('b_body').value.trim(), published: $('b_pub').checked };
+  const f = $('b_photo').files[0];
+  if (f) {
+    if (f.size > 3145728) { msg.className = 'err'; msg.textContent = 'Photo is larger than 3 MB.'; return; }
+    const ext = f.type === 'image/png' ? 'png' : f.type === 'image/webp' ? 'webp' : 'jpg';
+    const path = 'blog-' + Date.now() + '.' + ext;
+    const up = await sb.storage.from('report-photos').upload(path, f, { contentType: f.type });
+    if (up.error) { msg.className = 'err'; msg.textContent = 'Photo upload failed: ' + up.error.message; return; }
+    row.photo_url = sb.storage.from('report-photos').getPublicUrl(path).data.publicUrl;
+  }
+  const { error } = bEdit ? await sb.from('posts').update(row).eq('id', bEdit) : await sb.from('posts').insert(row);
+  if (error) { msg.className = 'err'; msg.textContent = 'Not saved: ' + error.message; return; }
+  msg.className = 'ok'; msg.textContent = 'Saved.'; resetBlogForm(); loadBlogAdmin(); loadBlog();
+};
+loadBlog();
 route(); loadPublic();
 </script>
 </body>
